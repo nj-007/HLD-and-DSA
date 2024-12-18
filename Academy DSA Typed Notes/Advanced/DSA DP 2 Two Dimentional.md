@@ -459,7 +459,7 @@ Here we notice that, 20, 30, 40 and 50 will be present on right side of 10. With
 
 Also on the right side, there is no elements. So denoting by C0.
 
-With `10 as root, the total number of BSTs => C0 * C1`
+With `10 as root, the total number of BSTs => C0 * C4`
 
 
 **20 as root**
@@ -505,7 +505,7 @@ There are 2 element on the left side and 2 elements on the right side.
 There are 3 element on the left side and 1 elements on the right side.
 
 
-`40 as root => C0 * C1`
+`40 as root => C3 * C1`
 
 **50 as root**
 ```
