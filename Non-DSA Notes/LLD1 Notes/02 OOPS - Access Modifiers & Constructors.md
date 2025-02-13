@@ -183,6 +183,48 @@ class Student {
         this.email = student.email;
     }
 }
+
+class Person {
+    String name;
+
+    // Constructor
+    Person(String name) {
+        this.name = name;
+    }
+
+    // Copy Constructor
+    Person(Person other) {
+        this.name = other.name; // Creates a new independent copy
+    }
+}
+
+
+
+-------------
+In Java, objects are passed by value, but since the value is a reference, modifying the object inside a method affects the original object.
+
+A copy constructor helps avoid this by creating a new independent object, preventing unintended changes.
+A copy constructor ensures that modifications happen on a separate object, not the original.
+
+
+public class Main {
+    public static void main(String[] args) {
+        Person p1 = new Person("John");
+
+        Person p2 = new Person(p1); // Using Copy Constructor
+        modifyPerson(p2); // Passing the copied object
+
+        System.out.println("Original Object Name: " + p1.name); // ✅ Unchanged
+        System.out.println("Copied Object Name: " + p2.name);   // ✅ Modified copy
+    }
+
+    static void modifyPerson(Person p) {
+        p.name = "Modified";  // This modifies only the copied object
+    }
+}
+
+
+
 ```
 
 ### Shallow & Deep Copy 
