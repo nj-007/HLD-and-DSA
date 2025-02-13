@@ -184,6 +184,18 @@ class Student {
     }
 }
 
+
+
+
+------------------
+
+In Java, objects are passed by value, but since the value is a reference, modifying the object inside a method affects the original object.
+
+A copy constructor helps avoid this by creating a new independent object, preventing unintended changes.
+A copy constructor ensures that modifications happen on a separate object, not the original.
+
+
+
 class Person {
     String name;
 
@@ -197,14 +209,6 @@ class Person {
         this.name = other.name; // Creates a new independent copy
     }
 }
-
-
-
--------------
-In Java, objects are passed by value, but since the value is a reference, modifying the object inside a method affects the original object.
-
-A copy constructor helps avoid this by creating a new independent object, preventing unintended changes.
-A copy constructor ensures that modifications happen on a separate object, not the original.
 
 
 public class Main {
