@@ -266,6 +266,117 @@ Player p1 = new Player("Prateek");
 ```
 Here `p1` stores the location of object on the heap, and hence `p1` in a reference to the newly created player object. 
 
+
+---------------
+
+### **Shallow Copy of the Above Example**  
+
+In a **shallow copy**, we copy the references of nested objects **instead of creating new objects**.  
+This means **both objects share the same `Department` instance**, so modifying one affects the other.
+
+---
+
+## **1️⃣ Shallow Copy Implementation**
+### **Updated Code:**
+```java
+class Department {
+    String deptName;
+
+    Department(String deptName) {
+        this.deptName = deptName;
+    }
+}
+
+class Employee {
+    String name;
+    Department department;  // Reference type
+
+    // ❌ Shallow Copy Constructor
+    Employee(Employee other) {
+        this.name = other.name;
+        this.department = other.department;  // 🔴 Only reference is copied, NOT a new object
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        // Step 1: Create a Department object
+        Department dept1 = new Department("IT");
+
+        // Step 2: Create an Employee object and associate it with dept1
+        Employee emp1 = new Employee("John", dept1);
+
+        // Step 3: Create a shallow copy of emp1
+        Employee emp2 = new Employee(emp1);  // ❌ Shallow copy
+
+        // Step 4: Modify emp2's department name
+        emp2.department.deptName = "HR";  // 🔴 Changes affect BOTH emp1 and emp2
+
+        // Step 5: Print results
+        System.out.println(emp1.name + " works in " + emp1.department.deptName); // ❌ IT → HR
+        System.out.println(emp2.name + " works in " + emp2.department.deptName);
+    }
+}
+```
+
+---
+
+## **2️⃣ Output (Unintended Modification)**
+```
+John works in HR
+John works in HR
+```
+🚨 **Problem:** Changing `emp2.department.deptName` **also modifies `emp1.department.deptName`**, because **both employees share the same `Department` object**.
+
+---
+
+## **3️⃣ Why Did This Happen?**
+- The **shallow copy constructor**:
+  ```java
+  this.department = other.department;
+  ```
+  - **Copies the reference**, not the object.
+  - Both `emp1` and `emp2` **point to the same `Department` instance**.
+  - Any change to `deptName` affects both employees.
+
+---
+
+## **4️⃣ Solution: Use Deep Copy Instead**
+To **prevent shared references**, create a **new `Department` object** inside the copy constructor (**deep copy**):
+
+```java
+// ✅ Deep Copy Constructor
+Employee(Employee other) {
+    this.name = other.name;
+    this.department = new Department(other.department.deptName); // ✅ New Object
+}
+```
+### **Output (Now Works Correctly)**
+```
+John works in IT
+John works in HR
+```
+✅ `emp1` and `emp2` now have **separate department objects**, so modifying one doesn’t affect the other.
+
+---
+
+## **5️⃣ Key Takeaways**
+| Feature | **Shallow Copy** | **Deep Copy** |
+|---------|----------------|--------------|
+| **Copies Object?** | ✅ Yes | ✅ Yes |
+| **Copies References?** | ✅ Yes | ❌ No (Creates new objects) |
+| **Modifying Nested Object Affects Original?** | ❌ Yes | ✅ No |
+| **Performance** | ✅ Faster | ❌ Slightly slower |
+
+---
+
+### **Final Thought**
+- **Use a shallow copy** if you want **shared references** (e.g., caching).  
+- **Use a deep copy** when objects contain **mutable references** to prevent unintended modifications.  
+
+Would you like more examples or optimizations? 🚀
+
+
 ### Objects & Object References
 ![](https://i.ibb.co/sgLNmYX/Screenshot-2024-01-14-at-3-28-37-PM.png)
 
