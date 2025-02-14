@@ -1,4 +1,4 @@
-## Topics to be Covered
+![image](https://github.com/user-attachments/assets/999f9e9a-ffe3-4374-b22c-b0c652576e1b)## Topics to be Covered
 
 - **Git Remotes**
   - Push Command
@@ -203,6 +203,337 @@ Would you like steps for handling merge conflicts in detail? 🚀
 
 
 -------------------------------------
+
+
+### **Real-World Example: `git rebase` vs `git revert` vs `git restore`**  
+
+Let's say you're working on a **feature branch (`feature-branch`)** based on `main`.  
+
+---
+
+## **1️⃣ Scenario: Using `git rebase` to Keep a Clean History**  
+**Problem:**  
+Your feature branch has **diverged** from `main`, and you want to bring it up to date before merging.  
+
+### **Before Rebase**
+```
+main:        A --- B --- C
+                 \
+feature-branch:   D --- E --- F
+```
+
+### **Solution: Rebase the Feature Branch onto `main`**
+```sh
+git checkout feature-branch
+git rebase main
+```
+
+### **After Rebase**
+```
+main:        A --- B --- C
+                          \
+feature-branch:            D' --- E' --- F'
+```
+✅ **All commits (`D`, `E`, `F`) are now based on the latest `main`**  
+✅ **History looks linear, making merging easier**  
+
+🚨 **Warning:** If your feature branch is shared with others, **do not use `rebase`** because it rewrites commit history.
+
+---
+
+## **2️⃣ Scenario: Using `git revert` to Undo a Specific Commit**
+**Problem:**  
+You committed a bug (`commit F`) that broke production. Instead of deleting history, you want to create a **new commit that undoes it**.
+
+### **Before Revert**
+```
+main: A --- B --- C --- D --- E --- F (Bug)
+```
+
+### **Solution: Revert `F`**
+```sh
+git revert F
+```
+
+### **After Revert**
+```
+main: A --- B --- C --- D --- E --- F --- G (Revert F)
+```
+✅ **Commit `F` is not removed**, but `G` is created to undo its effects  
+✅ **Safe for shared branches**  
+
+---
+
+## **3️⃣ Scenario: Using `git restore` to Discard Uncommitted Changes**
+**Problem:**  
+You modified `file.txt` but want to **undo changes before committing**.
+
+### **Solution: Restore the File**
+```sh
+git restore file.txt
+```
+✅ **Resets `file.txt` back to the last committed version**  
+
+---
+
+## **🚀 Summary**
+| Command | Use Case | Safe for Shared Branches? | Removes History? |
+|---------|---------|-----------------|----------------|
+| **`git rebase`** | Rewrite history, clean commit structure | ❌ No | ✅ Yes |
+| **`git revert`** | Undo a specific commit with a new commit | ✅ Yes | ❌ No |
+| **`git restore`** | Discard uncommitted changes | ✅ Yes | ❌ No |
+
+---
+
+Would you like to see **how to handle merge conflicts during rebase**? 🚀
+
+
+---------------------------
+
+### **Handling Merge Conflicts During `git rebase` (Practical Example)**  
+
+---
+
+### **🛠 Scenario: Rebase with a Conflict**
+You are working on a **feature branch (`feature-branch`)** based on `main`.  
+However, while you were working, **someone else modified the same file in `main`**.  
+Now, when you try to **rebase your branch onto `main`**, Git detects a **merge conflict**.
+
+---
+
+### **1️⃣ Initial State Before Rebase**
+Your **Git history looks like this:**
+```
+main:        A --- B --- C
+                 \
+feature-branch:   D --- E --- F
+```
+- **Commit `C` (on `main`) modifies `file.txt`.**
+- **Commit `D` (on `feature-branch`) also modifies `file.txt`.**
+
+---
+
+### **2️⃣ Start the Rebase**
+Now, let's rebase `feature-branch` onto `main`:
+```sh
+git checkout feature-branch
+git rebase main
+```
+✅ Git starts replaying `D`, `E`, and `F` **on top of `main`**.
+
+---
+
+### **3️⃣ Merge Conflict Occurs**
+```
+main:        A --- B --- C
+                          \
+feature-branch:            D' (Conflict!)
+```
+- Git tries to apply `D` on top of `C` but detects that **`file.txt` was changed in both branches**, causing a **conflict**.
+
+Git will show an error:
+```
+CONFLICT (content): Merge conflict in file.txt
+error: could not apply D...
+```
+
+---
+
+### **4️⃣ Resolve the Conflict Manually**
+1️⃣ Open the conflicted file (`file.txt`):
+```txt
+<<<<<<< HEAD (Current state from `main`)
+Code from commit C
+=======
+Code from commit D
+>>>>>>> feature-branch
+```
+2️⃣ **Manually edit the file** to keep the correct version:
+```txt
+Final version that includes both changes.
+```
+3️⃣ **Mark the conflict as resolved**:
+```sh
+git add file.txt
+```
+
+---
+
+### **5️⃣ Continue the Rebase**
+After resolving the conflict:
+```sh
+git rebase --continue
+```
+✅ Git continues replaying the remaining commits (`E`, `F`).  
+✅ If more conflicts occur, repeat the **resolve → add → continue** process.
+
+---
+
+### **6️⃣ If You Want to Abort the Rebase**
+If you want to **cancel the rebase** and return to the previous state:
+```sh
+git rebase --abort
+```
+✅ This **stops** the rebase and restores `feature-branch` to its original state.
+
+---
+
+### **7️⃣ Successfully Completed Rebase**
+After resolving all conflicts, Git history is now **linear**:
+```
+main:        A --- B --- C
+                          \
+feature-branch:            D' --- E' --- F'
+```
+Now, **push the rebased branch**:
+```sh
+git push origin feature-branch --force
+```
+✅ `--force` is needed because rebase **rewrites history**.
+
+---
+
+## **🚀 Summary of Commands**
+| Command | Purpose |
+|---------|---------|
+| `git rebase main` | Start rebase onto `main` |
+| `git status` | Check conflicts |
+| `git add <file>` | Mark conflict as resolved |
+| `git rebase --continue` | Continue rebase after resolving |
+| `git rebase --abort` | Cancel rebase if things go wrong |
+| `git push origin feature-branch --force` | Push after rebasing |
+
+---
+
+## **✅ When to Use Rebase vs. Merge?**
+| Feature | `git rebase` | `git merge` |
+|---------|-------------|-------------|
+| **History** | Linear & Clean | Preserves full commit history |
+| **Usage** | Before merging a feature branch | Merging into shared branches |
+| **Conflicts** | Must be resolved manually for each commit | All conflicts handled at once |
+
+---
+
+### **Would you like a hands-on exercise to practice this? 🚀**
+
+
+
+---------------------------------------------------------
+
+# **`git stash` - Real-World Example**  
+
+### **🔹 Scenario: You Need to Switch Branches Without Losing Changes**
+Imagine you're working on **feature-branch**, and you have **uncommitted changes** in your files.  
+Suddenly, your manager asks you to **fix a critical bug on `main`**.  
+
+✅ You **can’t commit** unfinished work.  
+✅ You **can’t switch branches** without committing or discarding changes.  
+✅ **Solution:** Use `git stash` to **temporarily save your changes**.
+
+---
+
+## **1️⃣ Before Using `git stash`**
+Let's say you're working on `feature-branch` and made changes to `file.txt`:
+```sh
+git status
+```
+```
+On branch feature-branch
+Changes not staged for commit:
+    modified: file.txt
+```
+🚨 **Problem:** If you try to switch to `main`, Git will block you:
+```
+error: Your local changes to the following files would be overwritten by checkout:
+        file.txt
+Please commit your changes or stash them before switching branches.
+```
+
+---
+
+## **2️⃣ Stash Your Changes**
+Use:
+```sh
+git stash
+```
+✅ This **saves your changes temporarily** and resets `file.txt` to its last committed state.  
+
+Check your stash:
+```sh
+git stash list
+```
+```
+stash@{0}: WIP on feature-branch: f3a2b1d Added new logic
+```
+
+---
+
+## **3️⃣ Switch Branches & Work on `main`**
+Now, you can **switch to `main` and fix the bug**:
+```sh
+git checkout main
+git pull origin main  # Get the latest changes
+# Fix the bug, commit & push
+```
+
+---
+
+## **4️⃣ Return to `feature-branch` and Restore Your Work**
+After fixing the bug, switch back:
+```sh
+git checkout feature-branch
+git stash pop  # Apply stashed changes & remove from stash
+```
+✅ **Your changes are restored** and removed from the stash list.
+
+---
+
+## **5️⃣ (Optional) If You Want to Keep Stashed Changes**
+If you want to **apply changes but keep them in the stash**, use:
+```sh
+git stash apply
+```
+✅ This **restores changes but does NOT delete the stash**.
+
+To remove a specific stash manually:
+```sh
+git stash drop stash@{0}
+```
+
+---
+
+## **6️⃣ (Optional) If You Need to Recover a Deleted Stash**
+If you accidentally deleted a stash and need to recover it:
+```sh
+git fsck --lost-found
+git show <stash-hash>  # Find lost stash and recover it
+```
+
+---
+
+## **🚀 Summary of Commands**
+| Command | Purpose |
+|---------|---------|
+| `git stash` | Stash uncommitted changes |
+| `git stash list` | View saved stashes |
+| `git stash pop` | Apply & remove the latest stash |
+| `git stash apply` | Apply stash but keep it saved |
+| `git stash drop stash@{0}` | Remove a specific stash |
+| `git stash clear` | Delete all stashes |
+
+---
+
+## **✅ When to Use `git stash`?**
+✔ **Switching branches temporarily** without committing work.  
+✔ **Saving work in progress** to test something else.  
+✔ **Keeping a clean commit history** without unnecessary commits.  
+
+---
+
+### **Would you like a scenario on `git stash apply` vs. `git stash pop`? 🚀**
+
+
+
 
 ## GitHub
 
