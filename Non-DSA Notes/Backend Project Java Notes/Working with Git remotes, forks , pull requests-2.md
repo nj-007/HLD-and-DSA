@@ -1,4 +1,4 @@
-![image](https://github.com/user-attachments/assets/999f9e9a-ffe3-4374-b22c-b0c652576e1b)## Topics to be Covered
+
 
 - **Git Remotes**
   - Push Command
@@ -416,6 +416,81 @@ git push origin feature-branch --force
 
 ### **Would you like a hands-on exercise to practice this? 🚀**
 
+----------------------------------------------------
+
+### **Why Should You Avoid `git rebase` on a Shared Branch?**  
+
+✅ **Short Answer:**  
+If multiple developers are working on the same feature branch, **rebasing rewrites commit history**, which can cause conflicts and break their work.  
+
+---
+
+### **🔹 What Happens When You Rebase a Shared Branch?**
+Let’s assume **two developers (`Dev A` and `Dev B`)** are working on `feature-branch`, which was created from `main`:
+
+```
+main:          A --- B --- C
+                   \
+feature-branch:     D --- E --- F  (Dev A and Dev B working)
+```
+
+Now, **Dev A** decides to rebase `feature-branch` onto `main`:
+```sh
+git checkout feature-branch
+git rebase main
+```
+
+This **moves `D, E, and F` to the top of `main`** and rewrites commit history:
+```
+main:          A --- B --- C
+                              \
+feature-branch (new history):  D' --- E' --- F'  (New commit hashes!)
+```
+
+---
+
+### **🔴 Problem: Dev B’s Local Copy Becomes Outdated**
+Now, when **Dev B** pulls the latest `feature-branch`, Git sees different commit hashes (`D', E', F'` instead of `D, E, F`), and **Dev B's local commits conflict** with the rebased history.
+
+If **Dev B** tries to push changes:
+```sh
+git push origin feature-branch
+```
+Git will reject the push:
+```
+error: failed to push some refs to 'origin/feature-branch'
+hint: Updates were rejected because the remote contains work that you do not have locally.
+```
+
+**💥 Dev B is now forced to manually fix conflicts!**
+
+---
+
+### **✅ Safer Alternative: Use `git merge` Instead of `git rebase`**
+Instead of rebasing, **use `git merge` to bring `main` into `feature-branch`**, keeping all commit history intact:
+
+```sh
+git checkout feature-branch
+git merge main
+git push origin feature-branch
+```
+This creates a **merge commit**, but **does not rewrite history**, preventing conflicts for other developers.
+
+---
+
+### **🚀 Summary**
+| Action | Safe for Shared Branch? | Effect |
+|--------|----------------|--------|
+| `git rebase` | ❌ No | Rewrites commit history, causes conflicts for others |
+| `git merge` | ✅ Yes | Keeps history intact, no forced conflict resolution |
+
+**🔹 Best Practice:**  
+❌ **Don’t rebase a shared branch** unless you’re the only one working on it.  
+✅ **Use `git merge`** to safely update your feature branch.  
+
+---
+
+Would you like an example on **how to recover from a broken rebase**? 🚀
 
 
 ---------------------------------------------------------
