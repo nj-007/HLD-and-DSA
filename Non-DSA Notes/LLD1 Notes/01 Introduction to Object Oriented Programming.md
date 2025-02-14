@@ -1,4 +1,108 @@
-# Introduction to Object Oriented Programming
+![image](https://github.com/user-attachments/assets/03001fdb-3825-41f4-99f3-f6d7b3f74d4e)# Introduction to Object Oriented Programming
+
+
+### **Referencing in Java: Pass by Value (Not Pass by Reference)**  
+
+#### **🔹 Java Always Uses "Pass by Value"**
+In Java, **everything is passed by value**, including **object references**.  
+However, when passing an object to a method, **the reference itself is passed by value**.
+
+This means:
+- ✅ **Primitives (`int`, `double`, `boolean`)** → A **copy** of the value is passed.
+- ✅ **Objects (`Student`, `User`, `List`, etc.)** → A **copy of the reference** is passed.
+
+---
+
+### **1️⃣ Pass by Value for Primitives (No Effect on Original)**
+```java
+public class Main {
+    public static void modifyPrimitive(int num) {
+        num = 20;  // This change is local to the method
+    }
+
+    public static void main(String[] args) {
+        int x = 10;
+        modifyPrimitive(x);
+        System.out.println(x); // Output: 10 (unchanged)
+    }
+}
+```
+✅ **Why?**  
+- `num` is a **copy** of `x`, so modifying `num` does **not** affect `x`.
+
+---
+
+### **2️⃣ Pass by Value for Object References (Modifies the Object, Not the Reference)**
+```java
+class User {
+    String name;
+}
+
+public class Main {
+    public static void modifyObject(User u) {
+        u.name = "Changed"; // ✅ Modifies the original object
+    }
+
+    public static void main(String[] args) {
+        User user = new User();
+        user.name = "Original";
+
+        modifyObject(user);
+        System.out.println(user.name); // Output: Changed
+    }
+}
+```
+✅ **Why?**  
+- `user` is an **object reference** (memory address).  
+- The **reference is passed by value**, meaning **both `u` and `user` point to the same object**.  
+- When we modify `u.name`, it **modifies the object itself**.
+
+---
+
+### **3️⃣ Pass by Value for Object References (Reassigning the Reference Does Not Affect the Original)**
+```java
+public class Main {
+    public static void modifyReference(User u) {
+        u = new User(); // ❌ Creates a new object, but doesn't change the original reference
+        u.name = "New Object"; 
+    }
+
+    public static void main(String[] args) {
+        User user = new User();
+        user.name = "Original";
+
+        modifyReference(user);
+        System.out.println(user.name); // Output: Original
+    }
+}
+```
+❌ **Why?**  
+- `u` was a **copy of the reference**, not the original reference itself.  
+- When `u` was assigned a new object (`new User()`), it only changed the **local reference inside `modifyReference`**, **not `user` in `main`**.
+
+---
+
+### **🚀 Summary: How Java Passes References**
+| **Scenario** | **Effect** |
+|-------------|-----------|
+| **Passing primitives (`int`, `double`)** | ❌ No effect on original variable |
+| **Passing objects (`User`, `List`)** | ✅ Modifies the object but not the reference |
+| **Reassigning object reference inside method** | ❌ No effect on original reference |
+
+---
+
+## **🔹 Key Takeaways**
+1️⃣ **Java is always pass by value**, including for object references.  
+2️⃣ **Primitive types** are copied, so changes in methods **do not affect the original**.  
+3️⃣ **Objects are passed by value (copy of reference)**, so **modifying the object's fields affects the original**.  
+4️⃣ **Reassigning an object reference inside a method does not change the original reference**.  
+
+Would you like more **real-world examples** of reference behavior? 🚀
+
+---------------------------------------------
+
+
+
 ---
 ## Programming Paradigms
 Programming paradigms are different ways or styles in which a given program or programming language can be organized. Each paradigm consists of certain structures, features, and opinions about how common programming problems should be tackled.
