@@ -95,6 +95,115 @@ Reference: [Github link](https://github.com/Naman-Bhalla/git_class_12_feb)
 
 ---
 
+
+### **Steps to Create a New Branch from `UAT`, Make Changes, and Merge It Back in a Production Environment**  
+
+---
+
+### **1️⃣ Switch to the `UAT` Branch & Ensure It's Up-to-Date**  
+Before creating a new branch, update your local copy of `UAT`.  
+```sh
+git checkout UAT   # Switch to UAT branch
+git pull origin UAT  # Get the latest changes from remote
+```
+✅ Ensures you're working with the latest `UAT` code.
+
+---
+
+### **2️⃣ Create a New Branch for Your Changes**  
+```sh
+git checkout -b feature-branch  # Create and switch to a new branch
+```
+✅ The `feature-branch` is now based on the latest `UAT`.
+
+---
+
+### **3️⃣ Make Changes & Commit Them**  
+Modify your files and then commit the changes.  
+```sh
+git add .  # Stage all changes
+git commit -m "Added new feature to feature-branch"
+```
+✅ Saves your changes locally.
+
+---
+
+### **4️⃣ Push the New Branch to Remote (Optional, for Collaboration)**  
+```sh
+git push -u origin feature-branch  # Uploads the new branch to remote
+```
+✅ This allows others to review your changes.
+
+---
+
+### **5️⃣ Switch Back to `UAT` & Pull Latest Changes**  
+Before merging, ensure `UAT` has the latest updates.  
+```sh
+git checkout UAT  # Switch back to UAT
+git pull origin UAT  # Get latest changes from remote
+```
+✅ Ensures no conflicts when merging.
+
+---
+
+### **6️⃣ Merge `feature-branch` into `UAT`**  
+```sh
+git merge feature-branch  # Merge changes into UAT
+```
+✅ If there are **no conflicts**, the merge completes successfully.  
+🚨 If conflicts occur, resolve them manually and run:
+```sh
+git add .  # Stage resolved files
+git commit -m "Resolved merge conflicts"
+```
+
+---
+
+### **7️⃣ Push Merged Changes to Remote `UAT`**  
+```sh
+git push origin UAT
+```
+✅ Now the merged changes are in the remote `UAT` branch.
+
+---
+
+### **8️⃣ (Optional) Delete the Feature Branch**  
+Once merged, the feature branch is no longer needed.  
+```sh
+git branch -d feature-branch  # Delete locally
+git push origin --delete feature-branch  # Delete from remote
+```
+✅ Cleans up unused branches.
+
+---
+
+### **Summary of Commands**
+```sh
+git checkout UAT
+git pull origin UAT
+git checkout -b feature-branch
+# Make changes
+git add .
+git commit -m "Added new feature"
+git push -u origin feature-branch
+git checkout UAT
+git pull origin UAT
+git merge feature-branch
+git push origin UAT
+git branch -d feature-branch
+git push origin --delete feature-branch
+```
+
+✅ **Best Practices**
+- **Always pull before branching and merging** (`git pull origin <branch>`).  
+- **Use `git status` to check changes before committing.**  
+- **Resolve conflicts carefully during merging.**  
+
+Would you like steps for handling merge conflicts in detail? 🚀
+
+
+-------------------------------------
+
 ## GitHub
 
 ### Forking a Repository
