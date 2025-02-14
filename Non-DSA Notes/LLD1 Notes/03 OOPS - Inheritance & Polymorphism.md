@@ -201,6 +201,17 @@ class Main(){
         makePayment(s);
     }
 }
+
+
+Can Student s = new User(); Work in Java?
+🔹 No, this will cause a compilation error unless User is a subclass of Student.
+🔹 In Java, a parent class (User) cannot be assigned to a child class (Student).
+
+🔹 Understanding Parent-Child Relationships
+Java follows inheritance rules, where:
+
+✅ Child → Parent assignment is allowed (Upcasting).
+❌ Parent → Child assignment is NOT allowed directly (Downcasting required).
 ```
 
 ### Method Overloading
