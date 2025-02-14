@@ -1,4 +1,3 @@
-![image](https://github.com/user-attachments/assets/03001fdb-3825-41f4-99f3-f6d7b3f74d4e)# Introduction to Object Oriented Programming
 
 
 ### **Referencing in Java: Pass by Value (Not Pass by Reference)**  
