@@ -65,6 +65,99 @@ public class FileReaderMethodExample {
 }
 ```
 
+
+In Java, a `try` block must be accompanied by either a `catch` block, a `finally` block, or both. This means you can have a `try` block without a `catch` block if it is followed by a `finally` block. The `finally` block contains code that executes regardless of whether an exception was thrown or caught, making it useful for resource cleanup.
+
+**Example: Using `try` with `finally`**
+
+```java
+try {
+    // Code that may throw an exception
+} finally {
+    // Code that will always execute
+}
+```
+
+In this structure, if an exception occurs within the `try` block, it will propagate up the call stack after the `finally` block executes, since there's no `catch` block to handle it.
+
+Additionally, starting from Java 7, you can use the try-with-resources statement, which manages resource closure automatically. In this case, the `try` block can function without explicit `catch` or `finally` blocks, as resources are closed automatically when the `try` block exits.
+
+**Example: Try-with-Resources**
+
+```java
+try (BufferedReader br = new BufferedReader(new FileReader("file.txt"))) {
+    // Use the resource
+} catch (IOException e) {
+    // Handle potential IOException
+}
+```
+
+In this example, `BufferedReader` is a resource that implements the `AutoCloseable` interface. The try-with-resources statement ensures that `br` is closed automatically at the end of the statement, even if an exception occurs.
+
+It's important to note that while the `catch` block is optional in both structures, omitting it means that any exceptions thrown within the `try` block and not handled will propagate up the call stack, potentially leading to program termination if not appropriately managed.
+
+In Java, `final`, `finally`, and `finalize` are terms with distinct purposes:
+
+**1. `final`:**
+
+`final` is a keyword used to impose restrictions on classes, methods, and variables:
+
+- **Class:** A `final` class cannot be subclassed. For example:
+
+  ```java
+  public final class Constants {
+      // Class content
+  }
+  ```
+
+- **Method:** A `final` method cannot be overridden by subclasses:
+
+  ```java
+  public class BaseClass {
+      public final void display() {
+          // Method content
+      }
+  }
+  ```
+
+- **Variable:** A `final` variable's value cannot be changed once initialized:
+
+  ```java
+  public class Example {
+      public static final int MAX_VALUE = 100;
+  }
+  ```
+
+**2. `finally`:**
+
+`finally` is a block used in exception handling to execute code after a `try` and `catch` block, regardless of whether an exception was thrown or caught. It's typically used for resource cleanup:
+
+```java
+try {
+    // Code that may throw an exception
+} catch (Exception e) {
+    // Exception handling
+} finally {
+    // Cleanup code, such as closing resources
+}
+```
+
+**3. `finalize`:**
+
+`finalize` is a method in the `Object` class that the garbage collector calls before an object is removed from memory. It's intended for cleanup operations, but its use is generally discouraged due to unpredictability and performance concerns. As of Java 9, `finalize` has been deprecated.
+
+```java
+@Override
+protected void finalize() throws Throwable {
+    try {
+        // Cleanup code
+    } finally {
+        super.finalize();
+    }
+}
+```
+
+Understanding the differences between `final`, `finally`, and `finalize` is crucial for effective Java programming, as each serves a unique role in the language. 
 ### Unchecked Exceptions
 These are not checked at compile-time, and they are subclasses of RuntimeException. They usually indicate programming errors, and it's not mandatory to handle them explicitly. 
 Unchecked exceptions also known as runtime exceptions, are exceptions that occur during the execution of a program.
