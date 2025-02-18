@@ -158,6 +158,81 @@ Collections.sort(names, (a, b) -> a.compareTo(b));
 Collections.sort(names, String::compareTo);
 ```
 
+To retrieve the salaries of employees from a list using Java's lambda expressions and the Stream API, you can map each `Employee` object to its `salary` field. Here's how you can achieve this:
+
+```java
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
+public class EmployeeSalaryExample {
+    public static void main(String[] args) {
+        // Sample list of employees
+        List<Employee> employees = Arrays.asList(
+            new Employee("Alice", 50000),
+            new Employee("Bob", 60000),
+            new Employee("Charlie", 55000)
+        );
+
+        // Extract salaries using a lambda expression
+        List<Integer> salaries = employees.stream()
+            .map(employee -> employee.getSalary())
+            .collect(Collectors.toList());
+
+        // Print the list of salaries
+        System.out.println(salaries);
+    }
+}
+
+class Employee {
+    private String name;
+    private int salary;
+
+    public Employee(String name, int salary) {
+        this.name = name;
+        this.salary = salary;
+    }
+
+    public int getSalary() {
+        return salary;
+    }
+}
+```
+
+**Explanation:**
+
+1. **Sample Data:** We create a list of `Employee` objects with names and salaries.
+
+2. **Stream and Map:** We convert the list to a stream and use the `map` function to transform each `Employee` object into its corresponding salary. The lambda expression `employee -> employee.getSalary()` achieves this transformation.
+
+3. **Collecting Results:** The `collect` method gathers the transformed data into a new list.
+
+4. **Output:** The program prints the list of salaries: `[50000, 60000, 55000]`.
+
+This approach efficiently extracts the `salary` field from each `Employee` object using Java's functional programming capabilities.
+
+For a visual demonstration and further explanation, you might find this video helpful:
+
+------------------------------
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
+public class FilterNumbers {
+    public static void main(String[] args) {
+        List<Integer> numbers = Arrays.asList(10, 2, 30, 0, 5, 100, 20, 3, 50);
+
+        List<Integer> filteredNumbers = numbers.stream()
+            .filter(num -> num.toString().startsWith("0"))
+            .collect(Collectors.toList());
+
+        System.out.println(filteredNumbers);
+    }
+}
+
+-------------------------------
+
 ## Java 8 Streams
 ### Streams
 A stream in Java is simply a wrapper around a data source, allowing us to perform bulk operations on the data in a convenient way. The Java Stream API, introduced in Java 8, is a powerful abstraction for processing sequences of elements, such as collections or arrays, in a functional and declarative way. 
