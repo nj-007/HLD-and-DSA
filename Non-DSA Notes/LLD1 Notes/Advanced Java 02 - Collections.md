@@ -40,6 +40,70 @@ Stack/Vector is an example of synchronized List.
 
 **Map:** A collection that maps keys to values. Implementations include HashMap, LinkedHashMap, TreeMap, and Hashtable.
 
+
+In Java, both `Comparable` and `Comparator` interfaces are used to define the ordering of objects, but they serve different purposes and are used in distinct scenarios.
+
+**1. `Comparable` Interface:**
+
+- **Purpose:** Defines the natural ordering of objects of a class.
+- **Usage:** A class implements the `Comparable` interface to specify how its instances should be compared. This is done by overriding the `compareTo` method.
+- **Method:** `int compareTo(T o)`
+- **Example:**
+
+  ```java
+  public class Employee implements Comparable<Employee> {
+      private String name;
+      private int age;
+
+      // Constructor, getters, and setters
+
+      @Override
+      public int compareTo(Employee other) {
+          return this.age - other.age; // Natural ordering by age
+      }
+  }
+  ```
+
+  In this example, `Employee` objects are ordered by age by default.
+
+**2. `Comparator` Interface:**
+
+- **Purpose:** Allows for defining multiple custom orderings for a class.
+- **Usage:** A separate class implements the `Comparator` interface to define an alternative ordering. This is useful when you need different sorting criteria.
+- **Method:** `int compare(T o1, T o2)`
+- **Example:**
+
+  ```java
+  import java.util.Comparator;
+
+  public class NameComparator implements Comparator<Employee> {
+      @Override
+      public int compare(Employee e1, Employee e2) {
+          return e1.getName().compareTo(e2.getName()); // Ordering by name
+      }
+  }
+  ```
+
+  Here, `NameComparator` provides an ordering based on the `name` field of `Employee` objects.
+
+**Key Differences:**
+
+- **Implementation Location:**
+  - `Comparable`: Implemented within the class itself.
+  - `Comparator`: Implemented in a separate class.
+
+- **Number of Orderings:**
+  - `Comparable`: Defines a single natural ordering.
+  - `Comparator`: Allows for multiple custom orderings.
+
+- **Modification Requirement:**
+  - `Comparable`: Requires modifying the class to implement the interface.
+  - `Comparator`: Does not require changes to the class; comparisons are external.
+
+For a practical demonstration and deeper understanding, you might find this video helpful:
+
+
+
 ### Example-1  List Interface and ArrayList
 The List interface extends the Collection interface and represents an ordered collection of elements. One of the common implementations is ArrayList. Let's see a simple example:
 
