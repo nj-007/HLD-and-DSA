@@ -32,6 +32,8 @@ There are several core interfaces in the Collections Framework:
 
 **List:** An ordered collection that allows duplicate elements. Implementations include ArrayList, LinkedList, and Vector.
 
+Stack/Vector is an example of synchronized List.
+
 **Queue:**: The Queue interface in Java is part of the Java Collections Framework and extends the Collection interface. Queues typically, but do not necessarily, order elements in a FIFO (first-in-first-out) manner. Among the exceptions are priority queues, which order elements according to a supplied comparator, or the elements' natural ordering. Implementations include ArrayDeque, LinkedList, PriorityQueue etc.
 
 **Set:** An unordered collection that does not allow duplicate elements. Implementations include HashSet, LinkedHashSet, and TreeSet.
