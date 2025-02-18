@@ -293,6 +293,14 @@ public class Checkers extends BoardGame {
 
 
 
+
+```
+
+In this example, `EnglishGreeting` is a concrete class that implements the `Greeting` interface. We can create an instance of `EnglishGreeting` and assign it to a `Greeting` reference. Alternatively, we use an anonymous inner class to provide a one-time implementation of the `Greeting` interface.
+
+
+
+
 ---------------------
 In Java, you cannot directly instantiate an interface or an abstract class because they are incomplete by design—they lack full implementations. However, there are ways to work with them effectively:
 
@@ -328,9 +336,7 @@ public class Main {
         spanishGreeting.sayHello(); // Outputs: ¡Hola!
     }
 }
-```
 
-In this example, `EnglishGreeting` is a concrete class that implements the `Greeting` interface. We can create an instance of `EnglishGreeting` and assign it to a `Greeting` reference. Alternatively, we use an anonymous inner class to provide a one-time implementation of the `Greeting` interface.
 
 **2. Instantiating an Abstract Class:**
 
