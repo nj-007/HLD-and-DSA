@@ -648,6 +648,27 @@ public class Main {
     }
 }
 ```
+Main Thread Starts
+
+Creates t1 (SimpleRunnable).
+Calls t1.start() → t1 starts running.
+Inside t1.run() (SimpleRunnable)
+
+Creates t2 (SimpleRunnableTwo).
+Calls t2.start() → t2 starts running.
+Calls t2.join(), so t1 waits for t2 to complete.
+Inside t2.run() (SimpleRunnableTwo)
+
+Sleeps for 5 seconds (Thread.sleep(5000)).
+After waking up, t2 finishes execution.
+After t2.join() Completes
+
+t1 continues execution (if it had more work).
+t1 finishes execution.
+Back to Main Thread
+
+After 1 second (Thread.sleep(1000)), it prints:
+
 
 ### 5. TIMED WAITING
 A thread is in `TIMED_WAITING` state when it’s waiting for another thread to perform a particular action within a stipulated amount of time.
