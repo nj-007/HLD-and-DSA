@@ -293,6 +293,110 @@ public class Main {
     }
 }
 ```
+
+
+I'll do a step-by-step dry run of the parallel merge sort implementation. Let's use a small example array to trace through the code execution.
+
+Let's say we have an initial array `[5, 2, 9, 1, 7, 6]` and an executor service has been set up.
+
+### Initial Call
+
+```java
+Sorter initialSorter = new Sorter([5, 2, 9, 1, 7, 6], executor);
+Future<List<Integer>> result = executor.submit(initialSorter);
+List<Integer> sortedArray = result.get();
+```
+
+### Dry Run:
+
+1. **Initial State**:
+   - `arr = [5, 2, 9, 1, 7, 6]`
+   - `n = 6`, `mid = 3`
+
+2. **Division**:
+   - `leftArr = [5, 2, 9]`
+   - `rightArr = [1, 7, 6]`
+
+3. **Create Sorters**:
+   - `leftSorter = new Sorter([5, 2, 9], executor)`
+   - `rightSorter = new Sorter([1, 7, 6], executor)`
+
+4. **Submit tasks to executor**:
+   - `leftFuture = executor.submit(leftSorter)`
+   - `rightFuture = executor.submit(rightSorter)`
+
+5. **Wait for completion with `get()`**:
+   - `leftArr = leftFuture.get()`
+   - `rightArr = rightFuture.get()`
+
+   Let's trace what happens with `leftSorter`:
+
+   5.1. **Left Task Execution**:
+      - `arr = [5, 2, 9]`
+      - `n = 3`, `mid = 1`
+      - `leftArr = [5]`
+      - `rightArr = [2, 9]`
+      - Create and submit: `leftSorter([5], executor)` and `rightSorter([2, 9], executor)`
+
+      5.1.1. **Left-Left Task**:
+         - `arr = [5]`
+         - Base case triggered (size <= 1)
+         - Return `[5]`
+
+      5.1.2. **Left-Right Task**:
+         - `arr = [2, 9]`
+         - `n = 2`, `mid = 1`
+         - `leftArr = [2]`, `rightArr = [9]`
+         - Create and submit new sorters
+         - Both hit base case, return `[2]` and `[9]`
+         - Merge: `[2, 9]`
+      
+      5.1.3. Left task's final merge: `[5]` and `[2, 9]` → `[2, 5, 9]`
+
+   5.2. **Right Task Execution**:
+      - `arr = [1, 7, 6]`
+      - `n = 3`, `mid = 1`
+      - `leftArr = [1]`
+      - `rightArr = [7, 6]`
+      - Create and submit: `leftSorter([1], executor)` and `rightSorter([7, 6], executor)`
+
+      5.2.1. **Right-Left Task**:
+         - `arr = [1]`
+         - Base case triggered
+         - Return `[1]`
+
+      5.2.2. **Right-Right Task**:
+         - `arr = [7, 6]`
+         - `n = 2`, `mid = 1`
+         - `leftArr = [7]`, `rightArr = [6]`
+         - Create and submit new sorters
+         - Both hit base case, return `[7]` and `[6]`
+         - Merge: `[6, 7]`
+      
+      5.2.3. Right task's final merge: `[1]` and `[6, 7]` → `[1, 6, 7]`
+
+6. **Final Merge**:
+   - `leftArr = [2, 5, 9]`
+   - `rightArr = [1, 6, 7]`
+   - Initialize `output = []`, `i = 0`, `j = 0`
+   - Compare and merge:
+     - Compare `2` and `1`: Add `1`, `j++`
+     - Compare `2` and `6`: Add `2`, `i++`
+     - Compare `5` and `6`: Add `5`, `i++`
+     - Compare `9` and `6`: Add `6`, `j++`
+     - Compare `9` and `7`: Add `7`, `j++`
+     - `j` reaches end of `rightArr`, add remaining `9` from `leftArr`
+   - Final output: `[1, 2, 5, 6, 7, 9]`
+
+### Key Observations:
+
+1. This algorithm implements a parallel merge sort using Java's executor service.
+2. Each recursive call creates two new `Sorter` tasks that are submitted to the executor.
+3. The `Future.get()` calls synchronize the execution, waiting for subtasks to complete.
+4. The merge operation combines the sorted subarrays.
+5. The base case is reached when an array has 0 or 1 elements.
+
+This implementation can be more efficient than sequential merge sort on multi-core systems because the sorting of subarrays happens in parallel, potentially using multiple CPU cores simultaneously.
 ## Coding Problem 2 : Download Manager (Homework)
 Consider a simple download manager application that needs to download multiple files concurrently. Implement the download manager using the Java Executor Framework.
 Requirements:
