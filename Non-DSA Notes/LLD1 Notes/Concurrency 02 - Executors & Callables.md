@@ -388,6 +388,53 @@ List<Integer> sortedArray = result.get();
      - `j` reaches end of `rightArr`, add remaining `9` from `leftArr`
    - Final output: `[1, 2, 5, 6, 7, 9]`
 
+
+You've identified an important detail. Let's look at where the intermediate merge results are stored at each level of recursion.
+
+In the `call()` method, the merge operation always stores its result in a local `output` array which is initialized at each level of recursion:
+
+```java
+// Merge
+List<Integer> output = new ArrayList<>();  // Local output array initialized here
+int i=0;
+int j=0;
+while(i<leftArr.size() && j<rightArr.size()){
+    // Merge logic fills this output array
+    // ...
+}
+// Copy remaining elements
+// ...
+return output;  // This output array becomes the return value
+```
+
+At each level of recursion:
+
+1. A new `output` ArrayList is created locally
+2. The merging of sorted subarrays populates this local `output` array
+3. This `output` array is returned by the `call()` method
+
+The key part is what happens to this returned array:
+- For recursive calls, the returned `output` becomes the value obtained from `leftFuture.get()` or `rightFuture.get()`
+- These values are assigned back to `leftArr` and `rightArr`:
+  ```java
+  leftArr = leftFuture.get();    // Stores the result of the left recursive merge
+  rightArr = rightFuture.get();  // Stores the result of the right recursive merge
+  ```
+
+So the sub-level merge results flow upward through the recursion by:
+1. Being returned by each `call()` method
+2. Being captured by `Future.get()` calls
+3. Being reassigned to the `leftArr` and `rightArr` variables
+4. These updated arrays are then merged at the current level
+
+This creates a chain where:
+- Base case returns single-element arrays
+- These get merged into small sorted arrays
+- Those arrays flow up to become inputs to higher-level merges
+- Until finally, the top-level merge produces the completely sorted array
+
+This is why the code reuses the `leftArr` and `rightArr` variables to store both the initial division of the array and later the sorted results of the recursive calls.
+
 ### Key Observations:
 
 1. This algorithm implements a parallel merge sort using Java's executor service.
