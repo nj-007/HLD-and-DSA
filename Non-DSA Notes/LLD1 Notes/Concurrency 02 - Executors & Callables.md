@@ -720,6 +720,61 @@ public class ScheduledExecutorExample {
 
 ---
 
+
+The line:  
+
+```java
+// Sleep for a while to allow the task to run multiple times
+try {
+    Thread.sleep(20000);
+} catch (InterruptedException e) {
+    e.printStackTrace();
+}
+```
+  
+### **Explanation**
+- `Thread.sleep(20000);` pauses the **current thread** for **20 seconds (20,000 milliseconds)**.
+- This is usually done to **allow background tasks (like threads in an executor) to complete their execution**.
+- If the **main thread** exits too early, the application might terminate before worker threads complete their tasks.
+- The `try-catch` block handles **InterruptedException**, which occurs if another thread interrupts this sleeping thread.
+
+### **Why is this used?**
+1. **Allow background tasks to run**  
+   - If you're using a **multi-threaded program (e.g., ExecutorService, TimerTasks, or background threads)**, you might want the main thread to **pause** so that other threads get time to complete their execution.
+
+2. **Avoid premature termination**  
+   - If the main thread **exits too early**, worker threads may not finish execution.
+   - `Thread.sleep(20000)` **keeps the main thread alive** for 20 seconds before proceeding (or terminating).
+
+### **Example Scenario**
+Imagine you have an `ExecutorService` running tasks:
+```java
+ExecutorService executor = Executors.newFixedThreadPool(4);
+executor.submit(() -> {
+    for (int i = 0; i < 10; i++) {
+        System.out.println("Task running: " + i);
+        try {
+            Thread.sleep(1000); // Simulating some work
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+});
+```
+Without `Thread.sleep(20000)`, if the **main thread exits**, the application might stop before the task completes.
+
+### **Alternative Approach**
+Instead of `Thread.sleep(20000)`, a **better approach** is:
+```java
+executor.shutdown();
+executor.awaitTermination(20, TimeUnit.SECONDS);
+```
+This **waits** for all threads to complete within **20 seconds** before shutting down.
+
+Would you like a detailed dry run for this? 🚀
+
+
+
 ## Synchronisation
 
 Whenever we have multiple threads that access the same resource, we need to make sure that the threads do not interfere with each other. This is called synchronisation.
