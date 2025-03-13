@@ -444,6 +444,32 @@ This is why the code reuses the `leftArr` and `rightArr` variables to store both
 5. The base case is reached when an array has 0 or 1 elements.
 
 This implementation can be more efficient than sequential merge sort on multi-core systems because the sorting of subarrays happens in parallel, potentially using multiple CPU cores simultaneously.
+
+Yes, exactly! The `Future.get()` calls **synchronize execution** by blocking the current thread until the corresponding **subtask (Sorter) completes**.
+
+### **How Future.get() Synchronizes Execution**
+1. The `executor.submit(leftSorter)` and `executor.submit(rightSorter)` **run the sorting tasks asynchronously**.
+2. However, when `Future.get()` is called:
+   - The **main thread (or calling thread)** **pauses execution** and **waits** until the child threads complete.
+   - Only when both left and right subarrays are **sorted** does execution continue.
+3. This ensures that merging happens **only after** both halves are fully sorted.
+
+### **Key Code Section:**
+```java
+Future<List<Integer>> leftFuture = executor.submit(new Sorter(leftArr, executor));
+Future<List<Integer>> rightFuture = executor.submit(new Sorter(rightArr, executor));
+
+leftArr = leftFuture.get();  // Blocks until left sublist is sorted
+rightArr = rightFuture.get();  // Blocks until right sublist is sorted
+```
+
+### **What Happens Without `Future.get()`?**
+If we **do not** use `Future.get()`, the sorting tasks would be submitted but **not necessarily completed** before merging, leading to **incorrect results or errors**.
+
+### **Final Takeaway**
+✔️ `Future.get()` **ensures proper synchronization**, making sure that merging happens **only after both halves are sorted**.
+
+
 ## Coding Problem 2 : Download Manager (Homework)
 Consider a simple download manager application that needs to download multiple files concurrently. Implement the download manager using the Java Executor Framework.
 Requirements:
