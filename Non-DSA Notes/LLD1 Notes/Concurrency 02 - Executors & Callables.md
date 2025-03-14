@@ -936,3 +936,5 @@ Main thread finished
 ### **Conclusion**
 Using `join()` ensures **synchronization** between threads and prevents unexpected results due to race conditions.
 
+In Java, every program starts execution from the main thread, which is created by the JVM when the main() method runs.
+
