@@ -856,3 +856,83 @@ Output is some random number every time we run the code.
 Now, this particular problem is known to be a data synchronization problem.
 This happens because the same data object is shared among various multi-threads, and they both are trying to modify the same data. This is an unexpected result that we have seen, but we will continue this in the next tutorial.
 
+
+==========
+
+### **Use of `join()` in Threads**
+The `join()` method in Java ensures that one thread waits for another to complete before continuing execution. 
+
+In your code:
+```java
+t1.join();
+t2.join();
+```
+This means:
+1. **Main thread waits** for `t1` (Adder) to finish execution.
+2. Once `t1` finishes, the **main thread waits** for `t2` (Subtractor) to finish execution.
+3. Only after both `t1` and `t2` complete, the main thread resumes execution.
+
+---
+
+### **Why is `join()` Used?**
+- Ensures that the main thread **does not proceed prematurely**.
+- Prevents the **final count from being printed before updates** by `Adder` and `Subtractor`.
+
+Without `join()`, the program might print the final count **before threads finish**, leading to incorrect results.
+
+---
+
+### **Example Without `join()`**
+```java
+public class WithoutJoin {
+    public static void main(String[] args) {
+        Thread t1 = new Thread(() -> System.out.println("Thread 1 Running"));
+        Thread t2 = new Thread(() -> System.out.println("Thread 2 Running"));
+        
+        t1.start();
+        t2.start();
+
+        System.out.println("Main thread finished");
+    }
+}
+```
+#### **Possible Output (Unpredictable)**
+```
+Main thread finished
+Thread 1 Running
+Thread 2 Running
+```
+- Here, "Main thread finished" may print **before** `t1` and `t2` complete.
+
+---
+
+### **Example With `join()`**
+```java
+public class WithJoin {
+    public static void main(String[] args) throws InterruptedException {
+        Thread t1 = new Thread(() -> System.out.println("Thread 1 Running"));
+        Thread t2 = new Thread(() -> System.out.println("Thread 2 Running"));
+
+        t1.start();
+        t2.start();
+
+        t1.join(); // Main thread waits for t1
+        t2.join(); // Main thread waits for t2
+
+        System.out.println("Main thread finished");
+    }
+}
+```
+#### **Guaranteed Output**
+```
+Thread 1 Running
+Thread 2 Running
+Main thread finished
+```
+- Ensures **both threads finish** before the main thread exits.
+
+---
+
+### **Conclusion**
+Using `join()` ensures **synchronization** between threads and prevents unexpected results due to race conditions.
+
