@@ -113,6 +113,68 @@ Semaphores
 **Execution**: When you run this program, you will observe the producer producing T-shirts and the consumer buying T-shirts. The store's capacity is maintained, and semaphores ensure proper synchronization between the producer and the consumer.
 
 This example demonstrates how semaphores can be used to solve the Producer-Consumer problem efficiently, preventing issues such as overproduction or stockouts.
+Great question! Let's break it down clearly.  
+
+In your **Producer-Consumer** problem implementation, `full.release()` and `empty.release()` are used to maintain synchronization between the producer and the consumer. Here's why:
+
+---
+
+### **Why is `full.release()` used in the Producer?**
+#### **Producer's Role**
+- The producer **produces a T-shirt** and places it in the store.
+- If the store was empty before, it must **notify the consumer** that a T-shirt is now available.
+- This is done using `full.release()`, which **increments the `full` semaphore** (indicating an available T-shirt).
+
+#### **Code Snippet (Producer)**
+```java
+empty.acquire(); // Wait for an empty slot
+mutex.acquire(); // Enter critical section
+
+// Produce a T-shirt
+System.out.println("Producer produces a T-shirt. Total T-shirts: " + ++tShirtCount);
+
+mutex.release(); // Exit critical section
+full.release(); // Signal that a T-shirt is ready to be consumed
+```
+🔹 **Why?** The `full` semaphore tells the consumer that a new item is available for purchase.
+
+---
+
+### **Why is `empty.release()` used in the Consumer?**
+#### **Consumer's Role**
+- The consumer **buys (removes) a T-shirt** from the store.
+- Since the store now has **an empty slot**, it must **notify the producer** that it can produce another T-shirt.
+- This is done using `empty.release()`, which **increments the `empty` semaphore** (indicating a free slot).
+
+#### **Code Snippet (Consumer)**
+```java
+full.acquire(); // Wait for a T-shirt to be available
+mutex.acquire(); // Enter critical section
+
+// Consume a T-shirt
+System.out.println("Consumer buys a T-shirt. Total T-shirts: " + --tShirtCount);
+
+mutex.release(); // Exit critical section
+empty.release(); // Signal that a slot is available for production
+```
+🔹 **Why?** The `empty` semaphore tells the producer that there is now room to produce another T-shirt.
+
+---
+
+### **Understanding the Relationship Between `full` and `empty`**
+| Action               | Semaphore Affected  | Effect |
+|----------------------|--------------------|--------|
+| Producer produces   | `full.release();`  | Signals consumer that a T-shirt is available. |
+| Consumer consumes   | `empty.release();` | Signals producer that a slot is available. |
+
+### **Key Takeaways**
+- `full` tracks **the number of available T-shirts**.  
+- `empty` tracks **the number of available slots**.  
+- `full.release()` **notifies the consumer** that a T-shirt is ready.  
+- `empty.release()` **notifies the producer** that a slot is empty.  
+
+Would you like a visualization or debugging tips for this? 🚀
+
 
 **Java Implementation -2 using Semaphores**
 **Producer.java**
