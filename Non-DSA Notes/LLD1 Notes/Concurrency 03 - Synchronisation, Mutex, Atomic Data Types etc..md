@@ -630,6 +630,140 @@ public class Maps {
 }
 ```
 
+### **`volatile` Keyword in Java**
+
+The `volatile` keyword in Java is used to ensure **visibility** and **ordering** of variable updates across multiple threads. It prevents **caching optimizations** that could lead to stale values being read in a multi-threaded environment.
+
+---
+
+### **1. Key Properties of `volatile`**
+- Ensures **visibility**: Changes made to a `volatile` variable by one thread are immediately visible to other threads.
+- Prevents **instruction reordering**: The compiler and CPU are restricted from reordering read/write operations on a `volatile` variable.
+- Does **not** provide atomicity (except for reading/writing single variables like `int`, `boolean`, `long`, etc.).
+- Does **not** replace synchronization mechanisms like `synchronized` or `Lock`.
+
+---
+
+### **2. When to Use `volatile`**
+Use `volatile` when:
+1. Multiple threads **read and write** to a shared variable.
+2. There’s **no dependency** between multiple operations on the variable (e.g., no read-modify-write sequences like `count++`).
+3. You need to ensure that updates to the variable are immediately visible to other threads.
+
+---
+
+### **3. Example Usage of `volatile`**
+#### **Without `volatile` (Incorrect Behavior)**
+```java
+class SharedResource {
+    static boolean flag = false; // Shared variable without volatile
+
+    static void thread1() {
+        while (!flag) {
+            // Busy-wait loop (may never exit due to caching)
+        }
+        System.out.println("Thread 1 finished!");
+    }
+
+    static void thread2() {
+        flag = true; // Update flag
+        System.out.println("Thread 2 updated flag.");
+    }
+
+    public static void main(String[] args) throws InterruptedException {
+        Thread t1 = new Thread(SharedResource::thread1);
+        Thread t2 = new Thread(SharedResource::thread2);
+        
+        t1.start();
+        Thread.sleep(100); // Ensure thread1 starts first
+        t2.start();
+    }
+}
+```
+🚨 **Issue**: `Thread 1` might never see `flag = true` because the CPU may cache the value.
+
+---
+
+#### **With `volatile` (Correct Behavior)**
+```java
+class SharedResource {
+    static volatile boolean flag = false; // Using volatile
+
+    static void thread1() {
+        while (!flag) {
+            // Now correctly sees updates
+        }
+        System.out.println("Thread 1 finished!");
+    }
+
+    static void thread2() {
+        flag = true; // Update flag
+        System.out.println("Thread 2 updated flag.");
+    }
+
+    public static void main(String[] args) throws InterruptedException {
+        Thread t1 = new Thread(SharedResource::thread1);
+        Thread t2 = new Thread(SharedResource::thread2);
+        
+        t1.start();
+        Thread.sleep(100);
+        t2.start();
+    }
+}
+```
+✅ **Fix**: Now `Thread 1` immediately sees the updated `flag` value.
+
+---
+
+### **4. When NOT to Use `volatile`**
+- If multiple operations need to be performed **atomically** (e.g., `counter++`, `x = x + y`).
+- When **ordering of multiple variables** must be maintained.
+- When you need **thread synchronization**, like ensuring a block of code is executed by only one thread.
+
+For atomic operations, use **`AtomicInteger`** or **`synchronized`** instead.
+
+---
+
+### **5. `volatile` vs. `synchronized`**
+| Feature          | `volatile` | `synchronized` |
+|-----------------|-----------|---------------|
+| Visibility      | ✅ Yes    | ✅ Yes        |
+| Atomicity      | ❌ No     | ✅ Yes        |
+| Performance    | 🔥 Faster | 🐢 Slower     |
+| Use Case       | Single variable updates | Critical sections or multiple operations |
+
+---
+
+### **6. Real-World Use Cases**
+1. **Flag variables** (e.g., `boolean stopThread = false;`).
+2. **Singleton instance** in double-checked locking:
+   ```java
+   class Singleton {
+       private static volatile Singleton instance;
+
+       public static Singleton getInstance() {
+           if (instance == null) {
+               synchronized (Singleton.class) {
+                   if (instance == null) {
+                       instance = new Singleton();
+                   }
+               }
+           }
+           return instance;
+       }
+   }
+   ```
+3. **Interrupt signals** between threads.
+
+---
+
+### **Final Thoughts**
+- Use `volatile` when **only visibility matters** and no atomic operations are needed.
+- For more complex cases, prefer **synchronization mechanisms** like `synchronized`, `Lock`, or `AtomicInteger`.
+
+======================================
+
+
 **Hashtable vs Concurrent Hashmap**
 HashMap is generally suitable for single threaded applications and is faster than Hashtable, however in multithreading environments we have you use **Hashtable** or **Concurrent Hashmap**. So let us talk about them.
 
