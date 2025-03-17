@@ -356,26 +356,32 @@ Try to solve the following problem using Semaphores Concept.
 
 **Solution**
 ```java
+import java.util.concurrent.Semaphore;
+
 class Foo {
-    Semaphore semaSecond = new Semaphore(0);
-    Semaphore semaThird = new Semaphore(0);
-    public Foo() {
-        
-    }
+    Semaphore semaSecond = new Semaphore(0); // Lock second() until first() is done
+    Semaphore semaThird = new Semaphore(0);  // Lock third() until second() is done
+
+    public Foo() {}
+
     public void first(Runnable printFirst) throws InterruptedException {
-        printFirst.run();
-        semaSecond.release();
+        printFirst.run();   // Execute first()
+        semaSecond.release(); // Signal second() that first() is done
     }
+
     public void second(Runnable printSecond) throws InterruptedException {
-        semaSecond.acquire();
-        printSecond.run();
-        semaThird.release();
+        semaSecond.acquire(); // Wait for first() to complete
+        printSecond.run();    // Execute second()
+        semaThird.release();  // Signal third() that second() is done
     }
+
     public void third(Runnable printThird) throws InterruptedException {
-        semaThird.acquire();
-        printThird.run();
+        semaThird.acquire(); // Wait for second() to complete
+        printThird.run();    // Execute third()
     }
 }
+
+
 ```
 ## DeadLocks
 
