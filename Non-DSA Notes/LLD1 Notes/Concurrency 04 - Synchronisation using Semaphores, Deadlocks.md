@@ -115,7 +115,7 @@ Semaphores
 This example demonstrates how semaphores can be used to solve the Producer-Consumer problem efficiently, preventing issues such as overproduction or stockouts.
 Great question! Let's break it down clearly.  
 
-In your **Producer-Consumer** problem implementation, `full.release()` and `empty.release()` are used to maintain synchronization between the producer and the consumer. Here's why:
+
 
 ---
 
@@ -126,18 +126,11 @@ In Java's Semaphore class, acquire() and release() are used for thread synchroni
 Purpose: Decreases the semaphore count (blocks if count is 0).
 Usage: A thread calls acquire() before entering a critical section to wait until a permit is available.
 Blocking Behavior: If no permit is available (count = 0), the thread waits until another thread releases a permit.
-java
-Copy
-Edit
-semaphore.acquire(); // Decrement count, wait if zero
+
+
 2️⃣ release():
 Purpose: Increases the semaphore count (unblocks a waiting thread if any).
 Usage: A thread calls release() after completing its critical section to signal that a resource is now available.
-java
-Copy
-Edit
-semaphore.release(); // Increment count, signal waiting thread
-
 
 **Java Implementation -2 using Semaphores**
 **Producer.java**
