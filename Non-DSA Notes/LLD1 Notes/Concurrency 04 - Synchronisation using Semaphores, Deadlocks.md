@@ -119,61 +119,24 @@ In your **Producer-Consumer** problem implementation, `full.release()` and `empt
 
 ---
 
-### **Why is `full.release()` used in the Producer?**
-#### **Producer's Role**
-- The producer **produces a T-shirt** and places it in the store.
-- If the store was empty before, it must **notify the consumer** that a T-shirt is now available.
-- This is done using `full.release()`, which **increments the `full` semaphore** (indicating an available T-shirt).
+Use of release() and acquire() in Semaphores
+In Java's Semaphore class, acquire() and release() are used for thread synchronization to control access to shared resources.
 
-#### **Code Snippet (Producer)**
-```java
-empty.acquire(); // Wait for an empty slot
-mutex.acquire(); // Enter critical section
-
-// Produce a T-shirt
-System.out.println("Producer produces a T-shirt. Total T-shirts: " + ++tShirtCount);
-
-mutex.release(); // Exit critical section
-full.release(); // Signal that a T-shirt is ready to be consumed
-```
-🔹 **Why?** The `full` semaphore tells the consumer that a new item is available for purchase.
-
----
-
-### **Why is `empty.release()` used in the Consumer?**
-#### **Consumer's Role**
-- The consumer **buys (removes) a T-shirt** from the store.
-- Since the store now has **an empty slot**, it must **notify the producer** that it can produce another T-shirt.
-- This is done using `empty.release()`, which **increments the `empty` semaphore** (indicating a free slot).
-
-#### **Code Snippet (Consumer)**
-```java
-full.acquire(); // Wait for a T-shirt to be available
-mutex.acquire(); // Enter critical section
-
-// Consume a T-shirt
-System.out.println("Consumer buys a T-shirt. Total T-shirts: " + --tShirtCount);
-
-mutex.release(); // Exit critical section
-empty.release(); // Signal that a slot is available for production
-```
-🔹 **Why?** The `empty` semaphore tells the producer that there is now room to produce another T-shirt.
-
----
-
-### **Understanding the Relationship Between `full` and `empty`**
-| Action               | Semaphore Affected  | Effect |
-|----------------------|--------------------|--------|
-| Producer produces   | `full.release();`  | Signals consumer that a T-shirt is available. |
-| Consumer consumes   | `empty.release();` | Signals producer that a slot is available. |
-
-### **Key Takeaways**
-- `full` tracks **the number of available T-shirts**.  
-- `empty` tracks **the number of available slots**.  
-- `full.release()` **notifies the consumer** that a T-shirt is ready.  
-- `empty.release()` **notifies the producer** that a slot is empty.  
-
-Would you like a visualization or debugging tips for this? 🚀
+1️⃣ acquire():
+Purpose: Decreases the semaphore count (blocks if count is 0).
+Usage: A thread calls acquire() before entering a critical section to wait until a permit is available.
+Blocking Behavior: If no permit is available (count = 0), the thread waits until another thread releases a permit.
+java
+Copy
+Edit
+semaphore.acquire(); // Decrement count, wait if zero
+2️⃣ release():
+Purpose: Increases the semaphore count (unblocks a waiting thread if any).
+Usage: A thread calls release() after completing its critical section to signal that a resource is now available.
+java
+Copy
+Edit
+semaphore.release(); // Increment count, signal waiting thread
 
 
 **Java Implementation -2 using Semaphores**
