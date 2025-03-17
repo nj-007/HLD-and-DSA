@@ -17,6 +17,8 @@
 
 ## Synchronisation using Semaphores
 
+Semaphores will start from basic in prod consumer problem after this.Its just to undertsand release() and acquire().
+
 ### Time To Try - Print In Order (LeetCode)
 Try to solve the following problem using Semaphores Concept.
 - [Print In Order - LeetCode](https://leetcode.com/problems/print-in-order/description/)
