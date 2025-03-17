@@ -1,4 +1,4 @@
-![image](https://github.com/user-attachments/assets/3464faf8-3d1a-4b55-b3d1-4fe8ba77dcf7)# Concurrency-4  Synchronization with Semaphores
+# Concurrency-4  Synchronization with Semaphores
 ----
 ## Agenda
 - Synchronisation using Semaphores
