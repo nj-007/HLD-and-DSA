@@ -1,4 +1,4 @@
-# Concurrency-4  Synchronization with Semaphores
+![image](https://github.com/user-attachments/assets/3464faf8-3d1a-4b55-b3d1-4fe8ba77dcf7)# Concurrency-4  Synchronization with Semaphores
 ----
 ## Agenda
 - Synchronisation using Semaphores
@@ -16,6 +16,56 @@
 - Additional Resources
 
 ## Synchronisation using Semaphores
+
+### Time To Try - Print In Order (LeetCode)
+Try to solve the following problem using Semaphores Concept.
+- [Print In Order - LeetCode](https://leetcode.com/problems/print-in-order/description/)
+
+**Solution**
+```java
+import java.util.concurrent.Semaphore;
+
+class Foo {
+    Semaphore semaSecond = new Semaphore(0); // Lock second() until first() is done
+    Semaphore semaThird = new Semaphore(0);  // Lock third() until second() is done
+
+    public Foo() {}
+
+    public void first(Runnable printFirst) throws InterruptedException {
+        printFirst.run();   // Execute first()
+        semaSecond.release(); // Signal second() that first() is done
+    }
+
+    public void second(Runnable printSecond) throws InterruptedException {
+        semaSecond.acquire(); // Wait for first() to complete
+        printSecond.run();    // Execute second()
+        semaThird.release();  // Signal third() that second() is done
+    }
+
+    public void third(Runnable printThird) throws InterruptedException {
+        semaThird.acquire(); // Wait for second() to complete
+        printThird.run();    // Execute third()
+    }
+}
+
+
+```
+
+### **Summary of `acquire()` and `release()` in `Semaphore`**  
+
+1️⃣ **`acquire()`**  
+   - **Purpose:** Decreases the semaphore count and **blocks the thread if no permits are available**.  
+   - **Usage:** Ensures a thread **waits until a required condition is met** before proceeding.  
+   - **Example:** In the `Foo` class, `second()` calls `acquire()` on `semaSecond`, ensuring it runs **only after `first()` completes**.  
+
+2️⃣ **`release()`**  
+   - **Purpose:** Increases the semaphore count and **signals waiting threads to proceed**.  
+   - **Usage:** Used to **unlock** or **signal** that a task has completed, allowing dependent operations to execute.  
+   - **Example:** In `first()`, `release()` is called on `semaSecond` to **unblock `second()`**, ensuring proper execution order.  
+
+✅ **Key Takeaway:** `acquire()` acts as a **checkpoint** to enforce order, while `release()` **unlocks the next stage of execution**. 🚀
+
+
 ### Producer Consumer Problem : A T-Shirt Store Example
 
 The Producer-Consumer problem is a classic synchronization problem where two processes, the producer and the consumer, share a common, fixed-size buffer or store. The producer produces items and adds them to the buffer, while the consumer consumes items from the buffer. Semaphores are synchronization primitives that can be used to solve this problem efficiently.
@@ -119,18 +169,6 @@ Great question! Let's break it down clearly.
 
 ---
 
-Use of release() and acquire() in Semaphores
-In Java's Semaphore class, acquire() and release() are used for thread synchronization to control access to shared resources.
-
-1️⃣ acquire():
-Purpose: Decreases the semaphore count (blocks if count is 0).
-Usage: A thread calls acquire() before entering a critical section to wait until a permit is available.
-Blocking Behavior: If no permit is available (count = 0), the thread waits until another thread releases a permit.
-
-
-2️⃣ release():
-Purpose: Increases the semaphore count (unblocks a waiting thread if any).
-Usage: A thread calls release() after completing its critical section to signal that a resource is now available.
 
 **Java Implementation -2 using Semaphores**
 **Producer.java**
@@ -350,39 +388,7 @@ public class Main {
 }
 ```
 
-### Time To Try - Print In Order (LeetCode)
-Try to solve the following problem using Semaphores Concept.
-- [Print In Order - LeetCode](https://leetcode.com/problems/print-in-order/description/)
 
-**Solution**
-```java
-import java.util.concurrent.Semaphore;
-
-class Foo {
-    Semaphore semaSecond = new Semaphore(0); // Lock second() until first() is done
-    Semaphore semaThird = new Semaphore(0);  // Lock third() until second() is done
-
-    public Foo() {}
-
-    public void first(Runnable printFirst) throws InterruptedException {
-        printFirst.run();   // Execute first()
-        semaSecond.release(); // Signal second() that first() is done
-    }
-
-    public void second(Runnable printSecond) throws InterruptedException {
-        semaSecond.acquire(); // Wait for first() to complete
-        printSecond.run();    // Execute second()
-        semaThird.release();  // Signal third() that second() is done
-    }
-
-    public void third(Runnable printThird) throws InterruptedException {
-        semaThird.acquire(); // Wait for second() to complete
-        printThird.run();    // Execute third()
-    }
-}
-
-
-```
 ## DeadLocks
 
 A deadlock in OS is a situation in which more than one process is blocked because it is holding a resource and also requires some resource that is acquired by some other process.
