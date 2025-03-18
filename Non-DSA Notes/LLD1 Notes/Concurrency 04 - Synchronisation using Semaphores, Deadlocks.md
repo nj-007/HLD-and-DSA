@@ -160,6 +160,19 @@ Semaphores
 - The consumer acquires a filled slot using full.acquire() and enters the critical section with mutex.acquire().
 - It consumes a T-shirt, decrements the count, releases the mutex, and signals that an empty slot is available for production using empty.release().
 
+**Mutex**
+Semaphore mutex = new Semaphore(1); // Acts like a mutex (Binary Semaphore)
+A semaphore initialized to 1 behaves like a lock (similar to synchronized).
+
+It has two states:
+Permit Available → Thread can enter the critical section.
+Permit Not Available → Thread must wait.
+When a thread calls acquire(), it takes the permit (count becomes 0).
+When it calls release(), it returns the permit (count becomes 1 again).
+
+mutex.acquire() ensures that only one thread enters the increment() method at a time.
+mutex.release() allows the next waiting thread to enter.
+
 **Simulated Production and Consumption:**
 `Thread.sleep()` is used to simulate the time it takes to produce and consume T-shirts.
 **Execution**: When you run this program, you will observe the producer producing T-shirts and the consumer buying T-shirts. The store's capacity is maintained, and semaphores ensure proper synchronization between the producer and the consumer.
