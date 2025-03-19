@@ -587,48 +587,7 @@ However, volatile does not provide atomicity or synchronization, so additional s
 **When not use volatile**
 - When the variable is used by single thread.
 - When a variable is used to store a large amount of data.
-### 3. Concurrent Data Structures 
-There are data structures designed in Collections Framework which support Concurrency but we will limit our discussions to one of the widely asked data structures - Concurrent Hashmap.
-Java Collections provides various data structures for working with **key-value pairs**. The commonly used ones are  - 
-- **Hashmap** (Non-Synchronised, Not Thread Safe)
-    - discuss the Synchronized Hashmap method
-    
-- **Hashtable** (Synchronised, Thread Safe)
-    - locking over entire table
-    
-- **Concurrent Hashmap** (Synchronised, Thread Safe, Higher Level of Concurrency, Faster)
-    - locking at bucket level, fine grained locking
 
-**Hashmap and Synchronised Hashmap Method**
-Synchronization is the process of establishing coordination and ensuring proper communication between two or more activities. Since a HashMap is not synchronized which may cause data inconsistency, therefore, we need to synchronize it. The in-built method ‘Collections.synchronizedMap()’ is a more convenient way of performing this task.
-
-A synchronized map is a map that can be safely accessed by multiple threads without causing concurrency issues. On the other hand, a Hash Map is not synchronized which means when we implement it in a multi-threading environment, multiple threads can access and modify it at the same time without any coordination. This can lead to data inconsistency and unexpected behavior of elements. It may also affect the results of an operation.
-
-Therefore, we need to synchronize the access to the elements of Hash Map using ‘synchronizedMap()’. This method creates a wrapper around the original HashMap and locks it whenever a thread tries to access or modify it.
-
-```java
-Collections.synchronizedMap(instanceOfHashMap);
-```
-
-The `synchronizedMap()` is a static method of the Collections class that takes an instance of HashMap collection as a parameter and returns a synchronized Map from it. However,it is important to note that only the map itself is synchronized, not its views such as keyset and entrySet. Therefore, if we want to iterate over the synchronized map, we need to use a synchronized block or a lock to ensure exclusive access.
-
-```java
-import java.util.*;
-public class Maps {
-   public static void main(String[] args) {
-      HashMap<String, Integer> cart = new HashMap<>();
-      // Adding elements in the cart map
-      cart.put("Butter", 5);
-      cart.put("Milk", 10);
-      cart.put("Rice", 20);
-      cart.put("Bread", 2);
-      cart.put("Peanut", 2);
-      // printing synchronized map from HashMap
-      Map mapSynched = Collections.synchronizedMap(cart);
-      System.out.println("Synchronized Map from HashMap: " + mapSynched);
-   }
-}
-```
 
 ### **`volatile` Keyword in Java**
 
@@ -763,6 +722,49 @@ For atomic operations, use **`AtomicInteger`** or **`synchronized`** instead.
 
 ======================================
 
+
+### 3. Concurrent Data Structures 
+There are data structures designed in Collections Framework which support Concurrency but we will limit our discussions to one of the widely asked data structures - Concurrent Hashmap.
+Java Collections provides various data structures for working with **key-value pairs**. The commonly used ones are  - 
+- **Hashmap** (Non-Synchronised, Not Thread Safe)
+    - discuss the Synchronized Hashmap method
+    
+- **Hashtable** (Synchronised, Thread Safe)
+    - locking over entire table
+    
+- **Concurrent Hashmap** (Synchronised, Thread Safe, Higher Level of Concurrency, Faster)
+    - locking at bucket level, fine grained locking
+
+**Hashmap and Synchronised Hashmap Method**
+Synchronization is the process of establishing coordination and ensuring proper communication between two or more activities. Since a HashMap is not synchronized which may cause data inconsistency, therefore, we need to synchronize it. The in-built method ‘Collections.synchronizedMap()’ is a more convenient way of performing this task.
+
+A synchronized map is a map that can be safely accessed by multiple threads without causing concurrency issues. On the other hand, a Hash Map is not synchronized which means when we implement it in a multi-threading environment, multiple threads can access and modify it at the same time without any coordination. This can lead to data inconsistency and unexpected behavior of elements. It may also affect the results of an operation.
+
+Therefore, we need to synchronize the access to the elements of Hash Map using ‘synchronizedMap()’. This method creates a wrapper around the original HashMap and locks it whenever a thread tries to access or modify it.
+
+```java
+Collections.synchronizedMap(instanceOfHashMap);
+```
+
+The `synchronizedMap()` is a static method of the Collections class that takes an instance of HashMap collection as a parameter and returns a synchronized Map from it. However,it is important to note that only the map itself is synchronized, not its views such as keyset and entrySet. Therefore, if we want to iterate over the synchronized map, we need to use a synchronized block or a lock to ensure exclusive access.
+
+```java
+import java.util.*;
+public class Maps {
+   public static void main(String[] args) {
+      HashMap<String, Integer> cart = new HashMap<>();
+      // Adding elements in the cart map
+      cart.put("Butter", 5);
+      cart.put("Milk", 10);
+      cart.put("Rice", 20);
+      cart.put("Bread", 2);
+      cart.put("Peanut", 2);
+      // printing synchronized map from HashMap
+      Map mapSynched = Collections.synchronizedMap(cart);
+      System.out.println("Synchronized Map from HashMap: " + mapSynched);
+   }
+}
+```
 
 **Hashtable vs Concurrent Hashmap**
 HashMap is generally suitable for single threaded applications and is faster than Hashtable, however in multithreading environments we have you use **Hashtable** or **Concurrent Hashmap**. So let us talk about them.
