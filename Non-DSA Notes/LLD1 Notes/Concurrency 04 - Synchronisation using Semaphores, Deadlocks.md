@@ -115,7 +115,8 @@ public class TShirtStore {
         @Override
         public void run() {
             try {
-                while (true) {
+                while (true) {//In Java (and most programming languages), while(true) is an infinite loop that will run continuously.
+//It ensures the Producer keeps producing T-shirts indefinitely (as long as there is space in the store).
                     full.acquire(); // Wait for a T-shirt to be available
                     mutex.acquire(); // Enter critical section
 
