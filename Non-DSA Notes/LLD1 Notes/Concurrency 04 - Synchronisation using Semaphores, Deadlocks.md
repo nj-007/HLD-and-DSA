@@ -423,6 +423,255 @@ Process P1 and P2 are in a deadlock because:
 * None of the processes can be preempted. (No preemption)
 * "Resource 1" and needs "Resource 2" from Process 2 while Process 2 holds "Resource 2" and requires "Resource 1" from Process 1. (Circular wait)
 
+* 
+
+### ✅ **Deadlock in Java Example**
+
+A **deadlock** occurs when two or more processes are blocked, each waiting for resources held by the other, resulting in an infinite waiting state. 
+
+### ⚡ **Deadlock Conditions (Coffman Conditions)**  
+Deadlock occurs when the following four conditions are met:
+1. **Mutual Exclusion:** Only one process can access a resource at a time.
+2. **Hold and Wait:** A process is holding at least one resource and waiting to acquire additional resources held by other processes.
+3. **No Preemption:** Resources cannot be forcibly taken from a process.
+4. **Circular Wait:** A set of processes are waiting on each other in a circular chain.
+
+---
+
+## ✅ **Example Code to Demonstrate Deadlock in Java**
+
+Here’s a simple Java program to simulate a deadlock scenario using two threads and two resources.
+
+### **Code Explanation:**  
+- **Thread 1**: Locks `Resource1` and waits for `Resource2`  
+- **Thread 2**: Locks `Resource2` and waits for `Resource1`  
+- Since both are holding one resource and waiting for the other, a deadlock occurs.
+
+```java
+public class DeadlockExample {
+
+    // Resources
+    private static final Object resource1 = new Object();
+    private static final Object resource2 = new Object();
+
+    public static void main(String[] args) {
+        
+        // Thread 1 - Locks resource1 and tries to lock resource2
+        Thread t1 = new Thread(() -> {
+            synchronized (resource1) {
+                System.out.println("Thread 1: Locked Resource 1");
+
+                try { Thread.sleep(100); } catch (InterruptedException e) { e.printStackTrace(); }
+
+                System.out.println("Thread 1: Waiting to lock Resource 2");
+                synchronized (resource2) {
+                    System.out.println("Thread 1: Locked Resource 2");
+                }
+            }
+        });
+
+        // Thread 2 - Locks resource2 and tries to lock resource1
+        Thread t2 = new Thread(() -> {
+            synchronized (resource2) {
+                System.out.println("Thread 2: Locked Resource 2");
+
+                try { Thread.sleep(100); } catch (InterruptedException e) { e.printStackTrace(); }
+
+                System.out.println("Thread 2: Waiting to lock Resource 1");
+                synchronized (resource1) {
+                    System.out.println("Thread 2: Locked Resource 1");
+                }
+            }
+        });
+
+        t1.start();
+        t2.start();
+    }
+}
+```
+
+---
+
+## ✅ **Explanation of the Deadlock Scenario**
+1. **Thread 1** locks **Resource 1** and waits for **Resource 2**.  
+2. **Thread 2** locks **Resource 2** and waits for **Resource 1**.  
+3. Both threads are now stuck in a deadlock as neither can proceed.  
+
+---
+
+## ✅ **How to Detect and Prevent Deadlock**
+
+### **1. Detection Using Thread Dumps**
+- You can generate a thread dump using:
+```bash
+jstack <process_id>
+```
+- Look for "BLOCKED" or "WAITING" states.
+
+---
+
+### **2. Prevention Techniques**
+- **Avoid Circular Wait:** Impose a strict ordering of resources using a numbering system and ensure processes request resources in that order.
+- **Avoid Hold and Wait:** Acquire all resources before starting work or release held resources before requesting new ones.
+- **Allow Preemption:** Forcefully take resources from a process under certain conditions.
+- **Use Timeout:** Use `tryLock()` with timeouts to avoid indefinite blocking.
+  
+#### Example with `tryLock()` using `ReentrantLock`:
+```java
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
+public class DeadlockPrevention {
+
+    private static final Lock lock1 = new ReentrantLock();
+    private static final Lock lock2 = new ReentrantLock();
+
+    public static void main(String[] args) {
+
+        Thread t1 = new Thread(() -> {
+            while (true) {
+                if (lock1.tryLock()) {
+                    try {
+                        System.out.println("Thread 1: Locked Resource 1");
+                        Thread.sleep(50);
+
+                        if (lock2.tryLock()) {
+                            try {
+                                System.out.println("Thread 1: Locked Resource 2");
+                                break;
+                            } finally {
+                                lock2.unlock();
+                            }
+                        }
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    } finally {
+                        lock1.unlock();
+                    }
+                }
+            }
+        });
+
+        Thread t2 = new Thread(() -> {
+            while (true) {
+                if (lock2.tryLock()) {
+                    try {
+                        System.out.println("Thread 2: Locked Resource 2");
+                        Thread.sleep(50);
+
+                        if (lock1.tryLock()) {
+                            try {
+                                System.out.println("Thread 2: Locked Resource 1");
+                                break;
+                            } finally {
+                                lock1.unlock();
+                            }
+                        }
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    } finally {
+                        lock2.unlock();
+                    }
+                }
+            }
+        });
+
+        t1.start();
+        t2.start();
+    }
+}
+```
+
+---
+
+In the **deadlock prevention example** using `tryLock()`, we avoid deadlocks by preventing threads from getting stuck indefinitely. Let's break down how it helps:
+
+---
+
+## ✅ **How `tryLock()` Helps Prevent Deadlocks**
+1. **Non-Blocking Nature**  
+    - Unlike `lock()` which blocks indefinitely if the resource is not available, `tryLock()` **attempts to acquire the lock**.
+    - If the lock is unavailable, it **immediately returns `false`** instead of blocking.
+
+2. **Avoid Circular Wait**  
+    - In the deadlock example, both threads check if they can acquire the second lock using `tryLock()`.  
+    - If one thread cannot acquire the second lock, it **releases the first lock** using `unlock()` and retries.  
+    - This breaks the **circular wait** condition that causes deadlocks.
+
+3. **Graceful Exit**  
+    - The thread doesn't remain blocked forever.  
+    - It releases the resource it is holding and retries after a brief period.  
+    - This ensures that resources are freed up for other threads to proceed.
+
+---
+
+## ✅ **Step-by-Step Explanation**
+Consider this part of the code:
+```java
+if (lock1.tryLock()) {
+    try {
+        System.out.println("Thread 1: Locked Resource 1");
+        Thread.sleep(50); // Simulate some work
+
+        if (lock2.tryLock()) {
+            try {
+                System.out.println("Thread 1: Locked Resource 2");
+            } finally {
+                lock2.unlock(); // Release Resource 2
+            }
+        } else {
+            System.out.println("Thread 1: Could not acquire Resource 2, retrying...");
+        }
+    } catch (InterruptedException e) {
+        e.printStackTrace();
+    } finally {
+        lock1.unlock(); // Release Resource 1
+    }
+}
+```
+
+### ✅ **What's Happening Here?**
+1. **Thread 1 acquires Resource 1.**
+2. It tries to acquire Resource 2 using `lock2.tryLock()`.
+3. - **If Successful:** It performs its task and releases both locks.  
+   - **If Failed:** It prints a message, releases Resource 1, and retries from the beginning.
+4. **Thread 2** follows a similar process.
+
+---
+
+## ✅ **How it Prevents Deadlock in Practice**
+- If **Thread 1** locks **Resource 1** and **Thread 2** locks **Resource 2**, both will try to acquire the other resource.  
+- However, because `tryLock()` **doesn't block** if the lock is unavailable, one of the threads will **fail to acquire the second resource**.
+- The failing thread will release its first lock and try again.  
+- Eventually, one of the threads will succeed in acquiring both resources.
+
+---
+
+## ✅ **Additional Improvements with Timeouts**
+You can use a timeout with `tryLock()` for even better control:
+```java
+if (lock1.tryLock(1, TimeUnit.SECONDS)) {
+    try {
+        if (lock2.tryLock(1, TimeUnit.SECONDS)) {
+            try {
+                System.out.println("Thread acquired both resources");
+            } finally {
+                lock2.unlock();
+            }
+        }
+    } finally {
+        lock1.unlock();
+    }
+} else {
+    System.out.println("Could not acquire lock. Exiting...");
+}
+```
+- This approach ensures that the thread **won’t wait forever** if locks are not available.
+- After **1 second**, the thread will stop trying and exit gracefully.
+
+---
+
+
 ### Tackling deadlocks
 
 There are three ways to tackle deadlocks:
