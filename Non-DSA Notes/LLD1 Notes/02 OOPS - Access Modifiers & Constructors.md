@@ -255,18 +255,6 @@ class Test{
 ```
 You might be wondering why didn't we create a deep copy for `int` and `String` data-types. This is because of the way java memory model works, for primitive data types like int, float etc Java always create new memory for different objects, and for strings because of immutability whenever you try to update the value of a String object, a new String object is automatically created in the string pool and the reference starts pointing to it. Hence for `int' and 'string' even if they are changed in T2 object, the changes won't be reflected in T1.
 
-## Java Memory Model
-Let's try to understand how are objects stored in the memory. Calling a constructor with the command `new` causes several things to happen. First, space is reserved in the heap memory for storing object variables. Then default or initial values are set to object variables (e.g. an int type variable receives an initial value of 0). Lastly, the source code in the constructor is executed.
-
-A constructor call returns a reference to an object. A reference is information about the location of object data.
-
-
-```java
-Player p1 = new Player("Prateek");
-```
-Here `p1` stores the location of object on the heap, and hence `p1` in a reference to the newly created player object. 
-
-
 ---------------
 
 ### **Shallow Copy of the Above Example**  
@@ -374,7 +362,22 @@ John works in HR
 - **Use a shallow copy** if you want **shared references** (e.g., caching).  
 - **Use a deep copy** when objects contain **mutable references** to prevent unintended modifications.  
 
-Would you like more examples or optimizations? 🚀
+
+
+
+
+
+## Java Memory Model
+Let's try to understand how are objects stored in the memory. Calling a constructor with the command `new` causes several things to happen. First, space is reserved in the heap memory for storing object variables. Then default or initial values are set to object variables (e.g. an int type variable receives an initial value of 0). Lastly, the source code in the constructor is executed.
+
+A constructor call returns a reference to an object. A reference is information about the location of object data.
+
+
+```java
+Player p1 = new Player("Prateek");
+```
+Here `p1` stores the location of object on the heap, and hence `p1` in a reference to the newly created player object. 
+
 
 
 ### Objects & Object References
